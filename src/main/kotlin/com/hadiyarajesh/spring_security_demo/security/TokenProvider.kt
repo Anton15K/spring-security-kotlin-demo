@@ -2,6 +2,7 @@ package com.hadiyarajesh.spring_security_demo.security
 
 import com.hadiyarajesh.spring_security_demo.app.exception.InvalidJwtException
 import io.jsonwebtoken.*
+import io.jsonwebtoken.security.Keys
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
@@ -13,8 +14,9 @@ class TokenProvider(
 ) {
     private fun extractAllClaims(token: String): Claims {
 
-        return Jwts.parser()
-            .setSigningKey(securityProperties.secret)
+        return Jwts.parserBuilder()
+            .setSigningKey(Keys.hmacShaKeyFor(securityProperties.secret.toByteArray()))
+            .build()
             .parseClaimsJws(token)
             .body
     }
@@ -39,7 +41,7 @@ class TokenProvider(
             .setIssuer("SpringSecurityKotlinDemoApplication")
             .setIssuedAt(now)
             .setExpiration(Date(now.time + tokenValidity))
-            .signWith(SignatureAlgorithm.HS256, securityProperties.secret)
+            .signWith(Keys.hmacShaKeyFor(securityProperties.secret.toByteArray()))
             .compact()
     }
 
@@ -60,8 +62,9 @@ class TokenProvider(
 
     fun validateToken(token: String): Boolean {
         try {
-            Jwts.parser()
-                .setSigningKey(securityProperties.secret)
+            Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(securityProperties.secret.toByteArray()))
+                .build()
                 .parseClaimsJws(token)
             return true
         } catch (e: MalformedJwtException) {
@@ -84,9 +87,14 @@ class TokenProvider(
     }
 
     fun getClaimsFromToken(token: String): Claims? {
-        return Jwts.parser()
-            .setSigningKey(securityProperties.secret)
-            .parseClaimsJws(token)
-            ?.body
+        return try {
+            Jwts.parserBuilder()
+                .setSigningKey(Keys.hmacShaKeyFor(securityProperties.secret.toByteArray()))
+                .build()
+                .parseClaimsJws(token)
+                .body
+        } catch (e: Exception) {
+            null
+        }
     }
 }
