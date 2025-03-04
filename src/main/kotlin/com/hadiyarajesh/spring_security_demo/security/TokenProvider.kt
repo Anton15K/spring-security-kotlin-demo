@@ -12,6 +12,7 @@ class TokenProvider(
     private val securityProperties: SecurityProperties
 ) {
     private fun extractAllClaims(token: String): Claims {
+
         return Jwts.parser()
             .setSigningKey(securityProperties.secret)
             .parseClaimsJws(token)

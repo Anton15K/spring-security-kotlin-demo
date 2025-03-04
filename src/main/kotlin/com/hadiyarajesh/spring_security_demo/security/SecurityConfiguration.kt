@@ -30,7 +30,8 @@ class SecurityConfiguration(
         http
 //            .csrf { csrf -> csrf.ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).disable() }
             .csrf {
-                csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()).disable()
+                csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console())
+                csrf.disable()
             }
              // Why to disable CSRF? Read here -> https://docs.spring.io/spring-security/reference/features/exploits/csrf.html#csrf-when
             .sessionManagement {
