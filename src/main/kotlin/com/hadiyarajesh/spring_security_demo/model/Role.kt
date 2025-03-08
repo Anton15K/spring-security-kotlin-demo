@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority
 
 @Entity
 @Table(name = "roles")
-class Role(
+data class Role(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,

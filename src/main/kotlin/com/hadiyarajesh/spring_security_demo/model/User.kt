@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "users")
-class User(
+data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -40,11 +40,4 @@ class User(
     @JsonIgnore
     override fun isEnabled() = true
 
-    fun copy(
-        id: Long? = this.id,
-        name: String = this.name,
-        email: String = this.email,
-        passWord: String = this.passWord,
-        roles: List<Role> = this.roles
-    ) = User(id, name, email, passWord, roles)
 }
